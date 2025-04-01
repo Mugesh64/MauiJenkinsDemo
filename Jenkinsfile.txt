@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOTNET_ROOT = '/usr/share/dotnet'  // Update based on your OS
+        DOTNET_ROOT = 'C:\Program Files\dotnet'  // Update based on your OS
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-username/MauiJenkinsDemo.git'
+                git branch: 'main',url:'https://github.com/Mugesh64/MauiJenkinsDemo'
             }
         }
         stage('Restore Dependencies') {
