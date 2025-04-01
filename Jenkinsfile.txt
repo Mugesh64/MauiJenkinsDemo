@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    environment {
+        DOTNET_ROOT = '/usr/share/dotnet'  // Update based on your OS
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your-username/MauiJenkinsDemo.git'
+            }
+        }
+        stage('Restore Dependencies') {
+            steps {
+                echo 'Restoring NuGet packages...'
+                sh 'dotnet restore MauiJenkinsDemo.sln'
+            }
+        }
+        stage('Build Project') {
+            steps {
+                echo 'Building the .NET MAUI app...'
+                sh 'dotnet build MauiJenkinsDemo.sln --configuration Release'
+            }
+        }
+        stage('Publish Android App') {
+            steps {
+                echo 'Publishing Android APK...'
+                sh 'dotnet publish -f:net8.0-android -c:Release -o ./publish/android'
+            }
+        }
+        stage('Archive Build Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'publish/android/*.apk', fingerprint: true
+            }
+        }
+    }
+}
