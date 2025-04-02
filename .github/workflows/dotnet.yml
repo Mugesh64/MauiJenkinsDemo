@@ -1,0 +1,50 @@
+name: .NET MAUI Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Install .NET MAUI Workload
+      run: dotnet workload install maui
+
+    - name: Restore dependencies
+      run: dotnet restore YourMauiProject.csproj
+
+    # Build for Windows
+    - name: Build for Windows
+      run: dotnet build YourMauiProject.csproj -f net8.0-windows --configuration Release --no-restore
+
+    # Build for Android
+    - name: Build for Android
+      run: dotnet build YourMauiProject.csproj -f net8.0-android --configuration Release --no-restore
+
+    # Build for iOS (Needs macOS runner, but we define it here)
+    - name: Build for iOS
+      run: dotnet build YourMauiProject.csproj -f net8.0-ios --configuration Release --no-restore
+      if: runner.os == 'macOS'
+
+    # Build for macOS (Needs macOS runner)
+    - name: Build for macOS
+      run: dotnet build YourMauiProject.csproj -f net8.0-maccatalyst --configuration Release --no-restore
+      if: runner.os == 'macOS'
+
+    # Run Tests (if you have tests)
+    - name: Run Tests
+      run: dotnet test YourMauiProject.Tests.csproj --no-build --verbosity normal
+
