@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -24,27 +23,30 @@ jobs:
       run: dotnet workload install maui
 
     - name: Restore dependencies
-      run: dotnet restore MauiApp1.csproj
+      run: dotnet restore MauiApp1/MauiApp1.csproj
+
+    - name: Restore Workloads
+      run: dotnet workload restore MauiApp1/MauiApp1.csproj
 
     # Build for Windows
     - name: Build for Windows
-      run: dotnet build MauiApp1.csproj -f net8.0-windows --configuration Release --no-restore
+      run: dotnet build MauiApp1/MauiApp1.csproj -f net8.0-windows --configuration Release --no-restore --output ./bin/windows
 
     # Build for Android
     - name: Build for Android
-      run: dotnet build MauiApp1.csproj -f net8.0-android --configuration Release --no-restore
+      run: dotnet build MauiApp1/MauiApp1.csproj -f net8.0-android --configuration Release --no-restore --output ./bin/android
 
-    # Build for iOS (Needs macOS runner, but we define it here)
+    # Build for iOS (Needs macOS runner)
     - name: Build for iOS
-      run: dotnet build MauiApp1.csproj -f net8.0-ios --configuration Release --no-restore
+      run: dotnet build MauiApp1/MauiApp1.csproj -f net8.0-ios --configuration Release --no-restore --output ./bin/ios
       if: runner.os == 'macOS'
 
     # Build for macOS (Needs macOS runner)
     - name: Build for macOS
-      run: dotnet build MauiApp1.csproj -f net8.0-maccatalyst --configuration Release --no-restore
+      run: dotnet build MauiApp1/MauiApp1.csproj -f net8.0-maccatalyst --configuration Release --no-restore --output ./bin/macos
       if: runner.os == 'macOS'
 
-    # Run Tests (if you have tests)
+    # Run Tests (if test project exists)
     - name: Run Tests
-      run: dotnet test MauiApp1.Tests.csproj --no-build --verbosity normal
-
+      run: dotnet test MauiApp1.Tests/MauiApp1.Tests.csproj --no-build --verbosity normal
+      if: hashFiles('MauiApp1.Tests/MauiApp1.Tests.csproj') != ''
